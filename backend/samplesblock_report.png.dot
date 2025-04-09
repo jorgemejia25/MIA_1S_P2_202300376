@@ -1,0 +1,146 @@
+digraph G {
+        bgcolor="#f7f7f7"
+        node [shape=plaintext, fontname="Arial", style="filled", fillcolor="#FFFFFF", color="#333333"]
+        edge [color="#666666", penwidth=1.5]
+        label="Reporte de Bloques"
+        labelloc="t"
+        fontsize="20"
+        fontname="Arial"
+        nodesep=0.5;
+        ranksep=0.7;
+        splines=false;
+    
+    subgraph row_0 {
+        rank=same;
+        block0 [tooltip="Bloque de Directorio 0", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D5F5E3">
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>BLOQUE DE DIRECTORIO 0</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td><td>0</td></tr>
+                
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 1</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>.</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>0</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 2</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>..</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>0</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 3</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>users.txt</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>1</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 4</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>home</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>2</td></tr>
+                    </table>>];
+                        block1 [tooltip="Bloque de Archivo 1", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D6EAF8">
+                        <tr><td colspan="1" bgcolor="#2874A6" align="center"><font color="white"><b>BLOQUE DE ARCHIVO 1</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td></tr>
+                        <tr><td>1</td></tr>
+                        <tr><td bgcolor="#2874A6" align="center"><font color="white"><b>Contenido</b></font></td></tr>
+                        <tr><td>1,G,root
+1,U,root,root,123
+</td></tr>
+                    </table>>];
+                        block2 [tooltip="Bloque de Directorio 2", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D5F5E3">
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>BLOQUE DE DIRECTORIO 2</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td><td>2</td></tr>
+                
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 1</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>.</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>2</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 2</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>..</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>0</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 3</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>usac</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>3</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 4</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>work</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>4</td></tr>
+                    </table>>];
+                        block3 [tooltip="Bloque de Directorio 3", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D5F5E3">
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>BLOQUE DE DIRECTORIO 3</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td><td>3</td></tr>
+                
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 1</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>.</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>3</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 2</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>..</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>2</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 3</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>mia</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>5</td></tr>
+                    </table>>];
+                    }
+    block3 -> block4 [style=invis];
+    block0 -> block1 [style=invis];
+    block1 -> block2 [style=invis];
+    block2 -> block3 [style=invis];
+
+    subgraph row_1 {
+        rank=same;
+        block4 [tooltip="Bloque de Directorio 4", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D5F5E3">
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>BLOQUE DE DIRECTORIO 4</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td><td>4</td></tr>
+                
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 1</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>.</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>4</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 2</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>..</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>2</td></tr>
+                    </table>>];
+                        block5 [tooltip="Bloque de Directorio 5", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D5F5E3">
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>BLOQUE DE DIRECTORIO 5</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td><td>5</td></tr>
+                
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 1</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>.</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>5</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 2</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>..</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>3</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 3</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>a.txt</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>6</td></tr>
+                    
+                        <tr><td colspan="2" bgcolor="#1E8449" align="center"><font color="white"><b>Entrada 4</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Nombre</b></td><td>b.txt</td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo</b></td><td>7</td></tr>
+                    </table>>];
+                        block6 [tooltip="Bloque de Archivo 6", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D6EAF8">
+                        <tr><td colspan="1" bgcolor="#2874A6" align="center"><font color="white"><b>BLOQUE DE ARCHIVO 6</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td></tr>
+                        <tr><td>6</td></tr>
+                        <tr><td bgcolor="#2874A6" align="center"><font color="white"><b>Contenido</b></font></td></tr>
+                        <tr><td></td></tr>
+                    </table>>];
+                        block7 [tooltip="Bloque de Archivo 7", label=<
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" style="rounded" bgcolor="#D6EAF8">
+                        <tr><td colspan="1" bgcolor="#2874A6" align="center"><font color="white"><b>BLOQUE DE ARCHIVO 7</b></font></td></tr>
+                        <tr><td bgcolor="#F8F9F9"><b>Inodo Propietario</b></td></tr>
+                        <tr><td>7</td></tr>
+                        <tr><td bgcolor="#2874A6" align="center"><font color="white"><b>Contenido</b></font></td></tr>
+                        <tr><td></td></tr>
+                    </table>>];
+                    }
+    block4 -> block5 [style=invis];
+    block5 -> block6 [style=invis];
+    block6 -> block7 [style=invis];
+}

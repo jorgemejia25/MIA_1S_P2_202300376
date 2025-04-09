@@ -1,0 +1,50 @@
+mkdisk -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk1.mia -size=10 
+fdisk -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk1.mia -name=Part1 -type=P -size=2 -unit=M
+mount -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk1.mia -name=Part1
+login -user=root -password=123
+mkfs -id=761A
+mkdir -path=/home
+mkdir -path=/var
+mkdir -path=/etc
+mkdir -path=/home/jorgis
+mkfile -path=/home/jorgis/test.txt -content="Hola mundo"
+cat -file1=/home/jorgis/test.txt
+rep -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/output.png -id=761A -name=mbr
+rep -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/output.png -id=761A -name=inode
+
+
+// el otro
+mkdisk -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk.mia -size=10 
+fdisk -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk.mia -name=Part1 -type=P -size=2 -unit=M
+mount -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk.mia -name=Part1
+mkfs -id=761A
+login -user=root -password=123 -id=761A
+mkdir -path=/home
+mkdir -path=/var
+mkdir -path=/etc
+mkdir -path=/home/jorgis
+mkfile -path=/home/jorgis/test.txt -content="Hola mundo" -size=10
+mkgrp -name=GrupoJorge
+cat -file1=/home/jorgis/test.txt -file2=users.txt
+
+//
+
+mkdisk -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk.mia -size=10 
+fdisk -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk.mia -name=Part1 -type=P -size=2 -unit=M
+mount -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/disk.mia -name=Part1
+mkfs -id=761A
+logout
+login -user=root -password=123 -id=761A
+mkgrp -name=Grupo
+mkusr -name=Jorgis -pass=123 -grp=Grupo
+logout
+login -user=Jorgis -password=123 -id=761A
+
+mkdir -path=/home
+mkdir -path=/var
+mkdir -path=/etc
+mkdir -path=/home/jorgis
+mkfile -path=/home/jorgis/test.txt -content=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/read.txt -size=10
+
+cat -file1=/home/jorgis/test.txt -file2=users.txt
+rep -path=/home/jorgis/Documents/USAC/archivos/proyecto1/backend/samples/output.png -id=761A -name=tree

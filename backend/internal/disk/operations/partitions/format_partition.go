@@ -8,11 +8,11 @@ import (
 
 	"disk.simulator.com/m/v2/internal/disk/memory"
 	"disk.simulator.com/m/v2/internal/disk/types/structures"
-	"disk.simulator.com/m/v2/internal/disk/types/structures/ext2"
+	"disk.simulator.com/m/v2/internal/disk/types/structures/ext"
 	"disk.simulator.com/m/v2/utils"
 )
 
-func FormatPartition(id string, formatType string) error {
+func FormatPartition(id string, formatType string, ext3 bool) error {
 	// Aquí iría la lógica para formatear la partición
 	partition, path, err := memory.GetInstance().GetMountedPartition(id)
 
@@ -50,8 +50,18 @@ func FormatPartition(id string, formatType string) error {
 	n := CalculateN(&partition.Partition)
 
 	fmt.Println("N: ", n)
+	journalSize := int32(binary.Size(ext2.Journal{}))
 
-	SBmInodeStart := partition.Partition.Part_start + int32(binary.Size(ext2.SuperBlock{}))
+	JournalStart := partition.Partition.Part_start + int32(binary.Size(ext2.SuperBlock{}))
+
+	var SBmInodeStart int32
+
+	if ext3 {
+		SBmInodeStart = JournalStart + (journalSize * n)
+	} else {
+		SBmInodeStart = partition.Partition.Part_start + int32(binary.Size(ext2.SuperBlock{}))
+	}
+
 	SBmBlockStart := SBmInodeStart + n
 	SInodeStart := SBmBlockStart + (3 * n)
 	SBlockStart := SInodeStart + (int32(ext2.INodeSize * n))
@@ -91,10 +101,11 @@ func FormatPartition(id string, formatType string) error {
 	fmt.Println(superBlock.SInodeStart)
 	fmt.Println(superBlock.SBlockStart)
 
-	err = superBlock.CreateBitMaps(path)
-
-	if err != nil {
-		return err
+	if ext3 {
+		err = superBlock.CreateBitMaps(path)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Crear el archivo users.txt

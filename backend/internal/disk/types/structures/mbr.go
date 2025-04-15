@@ -66,3 +66,51 @@ func (mbr *MBR) DeserializeMBR(path string) error {
 
 	return nil
 }
+
+// DeletePartitionFull elimina completamente una partición del disco
+func (mbr *MBR) DeletePartitionFull(path string, partitionName string) error {
+	file, err := os.OpenFile(path, os.O_RDWR, 0644)
+	if err != nil {
+		return fmt.Errorf("error al abrir el archivo: %v", err)
+	}
+	defer file.Close()
+
+	// Buscar la partición por nombre
+	for i, partition := range mbr.Mbr_partitions {
+		if string(partition.Part_name[:]) == partitionName {
+			// Calcular el tamaño y la posición de la partición
+			partitionSize := partition.Part_size
+			partitionStart := partition.Part_start
+
+			// Sobrescribir el espacio de la partición con \0
+			_, err := file.Seek(int64(partitionStart), 0)
+			if err != nil {
+				return fmt.Errorf("error al buscar la posición de la partición: %v", err)
+			}
+
+			zeroData := make([]byte, partitionSize)
+			_, err = file.Write(zeroData)
+			if err != nil {
+				return fmt.Errorf("error al sobrescribir la partición: %v", err)
+			}
+
+			// Marcar la partición como eliminada en el MBR
+			mbr.Mbr_partitions[i].Part_size = 0
+			mbr.Mbr_partitions[i].Part_start = 0
+			mbr.Mbr_partitions[i].Part_name = [16]byte{}
+			mbr.Mbr_partitions[i].Part_status = '0'
+			mbr.Mbr_partitions[i].Part_type = '0'
+			mbr.Mbr_partitions[i].Part_fit = '0'
+
+			// Serializar el MBR actualizado
+			err = mbr.SerializeMBR(path)
+			if err != nil {
+				return fmt.Errorf("error al actualizar el MBR: %v", err)
+			}
+
+			return nil
+		}
+	}
+
+	return fmt.Errorf("la partición '%s' no existe", partitionName)
+}

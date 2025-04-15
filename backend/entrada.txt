@@ -7,14 +7,8 @@
 #----------------- 1. MKDISK  -----------------
 
 
-#----------------- MKDISK CON ERROR -----------------
-# ERROR PARAMETROS
-mkdisk -param=x -size=30 -path=/home/jorgis/Calificacion_MIA/Discos/DiscoN.mia
-
 
 #----------------- CREACION DE DISCOS -----------------
-# ERROR PARAMETROS
-mkdisk -tamaño=3000 -unit=K -path=/home/jorgis/Calificacion_MIA/Discos/DiscoN.mia
 # 50M A
 Mkdisk -size=50 -unit=M -fit=FF -path=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia
 # 50M B
@@ -73,8 +67,6 @@ fdisk -type=P -unit=b -name=PartErr -size=10485760 -path=/home/jorgis/Calificaci
 
 
 #DISCO 3
-# ERROR FALTA ESPACIO
-fdisk -type=P -unit=m -name=PartErr -size=20 -path=/home/jorgis/Calificacion_MIA/Discos/Disco3.mia
 #4M
 fdisk -type=P -unit=m -name=Part31 -size=4 -path=/home/jorgis/Calificacion_MIA/Discos/Disco3.mia
 #4M
@@ -117,8 +109,6 @@ mount -path=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia -name=Part11
 
 
 #DISCO 3
-#ERROR PARTCION NO EXISTE
-mount -path=/home/jorgis/Calificacion_MIA/Discos/Disco3.mia -name=Part0
 #761B -> 76 sus ultimos dos digitos del carnet
 mount -path=/home/jorgis/Calificacion_MIA/Discos/Disco3.mia -name=Part31
 #762B -> 76 sus ultimos dos digitos del carnet
@@ -132,34 +122,6 @@ mount -path=/home/jorgis/Calificacion_MIA/Discos/Disco5.mia -name=Part53
 #-----------------MOUNT-----------------
 # ENLISTAR
 mounted
-
-
-#-----------------REPORTES PARTE 1-----------------
-#DISCO 1
-#ERROR ID NO ENCONTRADO
-rep -id=A761 -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_rE.jpg -name=mbr
-#REPORTE DISK
-rep -id=761A -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_r1_disk.jpg -name=disk
-#REPORTE MBR 
-rep -id=761A -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_r2_mbr.jpg -name=mbr
-
-
-#DISCO 3
-#ERROR ID NO ENCONTRADO
-rep -id=763B -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_rE_mbr.jpg -name=mbr
-#REPORTE DISK
-rep -id=761B -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_r3_disk.jpg -name=disk
-#REPORTE MBR
-rep -id=762B -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_r4_disk.jpg -name=mbr
-
-
-#DISCO 5
-#ERROR ID NO ENCONTRADO
-rep -id=IDx -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_rE_mbr.jpg -name=mbr
-#REPORTE DISK
-rep -id=761C -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_r5_disk.jpg -name=disk
-#REPORTE MBR
-rep -id=761C -Path=/home/jorgis/Calificacion_MIA/Reportes/p1_r6_mbr.jpg -name=mbr
 
 
 #-----------------5. MKFS-----------------
@@ -229,15 +191,12 @@ cat -file1=/users.txt
 
 #-----------------15. MKDIR-----------------
 mkdir -path=/bin
-# ERROR NO EXISTEN LAS CARPETAS PADRES
-mkdir -path="/home/archivos/archivos 24"
 mkdir -p -path=/home/archivos/user/docs/usac
 mkdir -p -path=/home/archivos/carpeta1/carpeta2/carpeta3/carpeta4/carpeta5
 
 
 #-----------------8. LOGOUT-----------------
 logout
-logout #ERROR NO HAY SESION INICIADA
 
 
 #-----------------7. LOGIN-----------------
@@ -269,29 +228,8 @@ mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=768
 mkfile -path=/home/archivos/user/docs/Tarea3.txt -size=10 -cont=/home/jorgis/Calificacion_MIA/CONT/NAME.txt
 
 
-#ERROR NO EXISTE RUTA
-mkfile -path="/home/archivos/noexiste/b1.txt"
 
-#ERROR NEGATIVO
-mkfile -path="/home/archivos/b1.txt" -size=-45
 
 #RECURSIVO
 mkfile -r -path=/home/archivos/user/docs/usac/archivos/proyectos/fase1/entrada.txt
 
-#-----------------6. CAT-----------------
-cat -file1=/home/archivos/user/docs/Tarea2.txt
-cat -file1=/home/archivos/user/docs/Tarea3.txt
-
-#------------------------REPORTES PARTE 4----------------
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r1_inode.jpg" -name=inode
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r2_block.jpg" -name=block
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r3_bm_inode.txt" -name=bm_inode
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r4_bm_block.txt" -name=bm_block
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r5_sb.jpg" -name=sb
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r6_file.jpg" -path_file_ls=/home/archivos/user/docs/Tarea2.txt  -name=file
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r7_ls.jpg" -path_file_ls=/home/archivos/user/docs -name=ls
-rep -id=761A -path=/home/jorgis/Calificacion_MIA/Reportes/p4_r8_tree.png" -name=tree
-
-
-#------------------------8. LOGOUT------------------------
-logout

@@ -101,7 +101,7 @@ func isDiskCommand(cmd string) bool {
 
 // isPartitionCommand verifica si el comando es un comando de partición
 func isPartitionCommand(cmd string) bool {
-	partitionCommands := []string{"mkfs", "mkdir", "mkfile", "cat"}
+	partitionCommands := []string{"mkfs", "mkdir", "mkfile", "cat", "remove", "edit", "rename", "copy"}
 	return containsIgnoreCase(partitionCommands, cmd)
 }
 

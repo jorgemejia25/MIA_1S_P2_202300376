@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"disk.simulator.com/m/v2/internal/args"
@@ -98,6 +99,8 @@ var fdiskCmd = &cobra.Command{
 		unit, _ := cmd.Flags().GetString("unit")
 		fit, _ := cmd.Flags().GetString("fit")
 		partitionType, _ := cmd.Flags().GetString("type")
+		del, _ := cmd.Flags().GetString("delete")
+		add, _ := cmd.Flags().GetString("add")
 
 		// Convertir unit y fit a mayúsculas para mantener consistencia
 		if unit == "" {
@@ -131,6 +134,15 @@ var fdiskCmd = &cobra.Command{
 			Fit:  fit,
 			Name: name,
 			Type: partitionType,
+			Add: func() int {
+				if add != "" {
+					addInt, err := strconv.Atoi(add)
+					if err == nil {
+						return addInt
+					}
+				}
+				return 0
+			}(),
 		}
 
 		// Crear el output formateado
@@ -139,6 +151,26 @@ var fdiskCmd = &cobra.Command{
 
 		// Escribir el output en la salida del comando
 		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		if del != "" {
+			// Si la opción de eliminación es diferente de vacío, eliminar la partición
+			err := partition_operations.DeletePartition(params)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), "Partition deleted successfully")
+			return nil
+		}
+
+		if add != "" {
+			// Si la opción de añadir espacio es diferente de vacío, añadir espacio a la partición
+			err := partition_operations.AddSpacePartition(params)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), "Space added to partition successfully")
+			return nil
+		}
 
 		// Crear la partición usando la estructura FDisk
 		err := partition_operations.CreatePartition(params)
@@ -354,6 +386,33 @@ var mountCmd = &cobra.Command{
 	},
 }
 
+var unmountCmd = &cobra.Command{
+	Use:   "unmount",
+	Short: "Unmount a partition",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		id, _ := cmd.Flags().GetString("id")
+
+		if id == "" {
+			return fmt.Errorf("el ID de la partición es requerido")
+		}
+
+		// Crear el output formateado
+		output := fmt.Sprintf("Unmounting partition with ID %s", id)
+
+		// Escribir el output en la salida del comando
+		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		// Desmontar la partición
+		err := partition_operations.UnmountPartition(id)
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprintln(cmd.OutOrStdout(), "Partition unmounted successfully")
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(mkdiskCmd)
 	rootCmd.AddCommand(rmdiskCmd)
@@ -361,6 +420,7 @@ func init() {
 	rootCmd.AddCommand(fdiskCmd) // Asegúrate de agregar el comando fdisk al rootCmd
 	rootCmd.AddCommand(mountedCmd)
 	rootCmd.AddCommand(mountCmd)
+	rootCmd.AddCommand(unmountCmd)
 
 	// MKDISK
 	mkdiskCmd.PersistentFlags().IntP("size", "s", 0, "Size of the disk in MB or KB") // Agregar alias -s para --size
@@ -398,15 +458,21 @@ func init() {
 	fdiskCmd.PersistentFlags().IntP("size", "s", 0, "Size of the partition in MB or KB") // Agregar alias -s para --size
 	fdiskCmd.MarkPersistentFlagRequired("size")
 
-	fdiskCmd.Flags().StringP("unit", "u", "M", "Unit type (B, K, M)")             // Unidad predeterminada actualizada a M
-	fdiskCmd.Flags().StringP("fit", "f", "FF", "Fit type (WF, FF, BF)")           // Agregar alias -f para --fit
-	fdiskCmd.Flags().StringP("type", "t", "P", "Type of the partition (P, E, L)") // Agregar alias -t para --type
+	fdiskCmd.Flags().StringP("unit", "u", "M", "Unit type (B, K, M)")              // Unidad predeterminada actualizada a M
+	fdiskCmd.Flags().StringP("fit", "f", "FF", "Fit type (WF, FF, BF)")            // Agregar alias -f para --fit
+	fdiskCmd.Flags().StringP("type", "t", "P", "Type of the partition (P, E, L)")  // Agregar alias -t para --type
+	fdiskCmd.Flags().StringP("delete", "d", "", "Delete partition (Full or Fast)") // Agregar alias -d para --delete
+	fdiskCmd.Flags().StringP("add", "a", "", "ADD to the partition")               // Agregar alias -a para --start
 
 	// MOUNT
 	mountCmd.PersistentFlags().StringP("path", "p", "", "Path to the disk")
 	mountCmd.MarkPersistentFlagRequired("path")
 	mountCmd.PersistentFlags().StringP("name", "n", "", "Name of the partition to mount")
 	mountCmd.MarkPersistentFlagRequired("name")
+
+	// UNMOUNT
+	unmountCmd.PersistentFlags().StringP("id", "i", "", "ID of the partition to unmount")
+	unmountCmd.MarkPersistentFlagRequired("id")
 }
 
 // ParseDiskCommand analiza y ejecuta un comando de disco
@@ -501,5 +567,10 @@ func resetFlags() {
 	}
 	if mountCmd.Flags().Lookup("name") != nil {
 		mountCmd.Flags().Set("name", "")
+	}
+
+	// Reiniciar flags de unmount
+	if unmountCmd.Flags().Lookup("id") != nil {
+		unmountCmd.Flags().Set("id", "")
 	}
 }

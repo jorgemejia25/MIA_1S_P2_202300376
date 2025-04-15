@@ -9,6 +9,7 @@ func main() {
 	r := gin.Default()
 
 	r.POST("/command", handlers.HandleCommand)
+	r.POST("/login", handlers.HandleLogin)
 
 	r.Run() // Por defecto escucha en :8080
 }

@@ -2,11 +2,12 @@ package partition_operations
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"disk.simulator.com/m/v2/internal/disk/memory"
 	"disk.simulator.com/m/v2/internal/disk/operations/auth"
-	"disk.simulator.com/m/v2/internal/disk/types/structures/ext2"
+	ext2 "disk.simulator.com/m/v2/internal/disk/types/structures/ext"
 	"disk.simulator.com/m/v2/utils"
 )
 
@@ -47,6 +48,12 @@ func CreateDirectory(dirPath string, p bool) error {
 
 	if err != nil {
 		return err
+	}
+
+	// Forzar sincronización después de crear directorio
+	if file, err := os.OpenFile(partitionPath, os.O_WRONLY, 0666); err == nil {
+		file.Sync()
+		file.Close()
 	}
 
 	fmt.Printf("Directory %s created\n", dirPath)

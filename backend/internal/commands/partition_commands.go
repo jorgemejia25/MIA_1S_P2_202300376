@@ -266,6 +266,24 @@ var copyCmd = &cobra.Command{
 	},
 }
 
+var moveCmd = &cobra.Command{
+	Use:   "move",
+	Short: "Move a file or directory",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		source, _ := cmd.Flags().GetString("path")
+		dest, _ := cmd.Flags().GetString("destino")
+
+		if source == "" || dest == "" {
+			return fmt.Errorf("se requieren tanto el source como el dest")
+		}
+
+		output := fmt.Sprintf("Moviendo %s a %s", source, dest)
+		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		return partition_operations.MoveFileOrDirectory(source, dest)
+	},
+}
+
 func init() {
 	// MKFS
 	partitionRootCmd.AddCommand(mkfsCmd)
@@ -319,6 +337,13 @@ func init() {
 	copyCmd.PersistentFlags().StringP("destino", "d", "", "Ruta destino")
 	copyCmd.MarkPersistentFlagRequired("path")
 	copyCmd.MarkPersistentFlagRequired("destino")
+
+	// MOVE
+	partitionRootCmd.AddCommand(moveCmd)
+	moveCmd.PersistentFlags().StringP("path", "s", "", "Ruta origen")
+	moveCmd.PersistentFlags().StringP("destino", "d", "", "Ruta destino")
+	moveCmd.MarkPersistentFlagRequired("path")
+	moveCmd.MarkPersistentFlagRequired("destino")
 }
 
 // ParsePartitionCommand analiza y ejecuta un comando de partición
@@ -389,5 +414,21 @@ func resetPartitionFlags() {
 		if catCmd.Flags().Lookup(flagName) != nil {
 			catCmd.Flags().Set(flagName, "")
 		}
+	}
+
+	// Reiniciar flags de copy
+	if copyCmd.Flags().Lookup("path") != nil {
+		copyCmd.Flags().Set("path", "")
+	}
+	if copyCmd.Flags().Lookup("destino") != nil {
+		copyCmd.Flags().Set("destino", "")
+	}
+
+	// Reiniciar flags de move
+	if moveCmd.Flags().Lookup("path") != nil {
+		moveCmd.Flags().Set("path", "")
+	}
+	if moveCmd.Flags().Lookup("destino") != nil {
+		moveCmd.Flags().Set("destino", "")
 	}
 }

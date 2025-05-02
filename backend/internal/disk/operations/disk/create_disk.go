@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	mbr_operations "disk.simulator.com/m/v2/internal/disk/operations/mbr"
 	"disk.simulator.com/m/v2/internal/disk/types"
@@ -46,8 +47,24 @@ func CreateDisk(params types.MkDisk) error {
 		remaining -= writeSize
 	}
 
+	// Crear el MBR del disco
 	err = mbr_operations.CreateMBR(params, int32(sizeInBytes))
+	if err != nil {
+		return fmt.Errorf("error al crear el MBR: %v", err)
+	}
+
+	// Registrar el disco en el registro
+	diskInfo := DiskInfo{
+		Name:     filepath.Base(params.Path),
+		Path:     params.Path,
+		Size:     sizeInBytes,
+		Created:  time.Now(),
+		Modified: time.Now(),
+	}
+
+	// Obtener el registro y añadir el disco
+	registry := GetDiskRegistry()
+	registry.RegisterDisk(diskInfo)
 
 	return nil
 }
-

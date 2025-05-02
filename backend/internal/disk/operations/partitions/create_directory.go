@@ -56,6 +56,26 @@ func CreateDirectory(dirPath string, p bool) error {
 		file.Close()
 	}
 
+	// Si el sistema de archivos es ext3, registrar la operación en el journaling
+	if superBlock.SFilesystemType == 3 {
+		// Registrar la operación en el journal
+		err = ext2.AddJournal(
+			partitionPath,
+			int64(partition.Partition.Part_start),
+			0, // Este parámetro es ignorado ahora
+			"mkdir",
+			dirPath,
+			"", // No hay contenido específico para un directorio
+		)
+
+		if err != nil {
+			fmt.Printf("Advertencia: No se pudo registrar la operación en el journaling: %v\n", err)
+			// No retornar error, ya que el directorio fue creado exitosamente
+		} else {
+			fmt.Println("Operación registrada en el journaling")
+		}
+	}
+
 	fmt.Printf("Directory %s created\n", dirPath)
 
 	return nil

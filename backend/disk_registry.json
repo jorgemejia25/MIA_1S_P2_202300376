@@ -1,0 +1,37 @@
+{
+  "/home/jorgis/Calificacion_MIA/Discos/Disco1.mia": {
+    "name": "Disco1.mia",
+    "path": "/home/jorgis/Calificacion_MIA/Discos/Disco1.mia",
+    "size": 52428800,
+    "created": "2025-04-29T22:15:23.580953587-06:00",
+    "modified": "2025-04-29T22:15:23.580954648-06:00"
+  },
+  "/home/jorgis/Calificacion_MIA/Discos/Disco2.mia": {
+    "name": "Disco2.mia",
+    "path": "/home/jorgis/Calificacion_MIA/Discos/Disco2.mia",
+    "size": 52428800,
+    "created": "2025-04-29T22:15:23.674457908-06:00",
+    "modified": "2025-04-29T22:15:23.674458091-06:00"
+  },
+  "/home/jorgis/Calificacion_MIA/Discos/Disco3.mia": {
+    "name": "Disco3.mia",
+    "path": "/home/jorgis/Calificacion_MIA/Discos/Disco3.mia",
+    "size": 13631488,
+    "created": "2025-04-29T22:15:23.704552934-06:00",
+    "modified": "2025-04-29T22:15:23.70455363-06:00"
+  },
+  "/home/jorgis/Calificacion_MIA/Discos/Disco4.mia": {
+    "name": "Disco4.mia",
+    "path": "/home/jorgis/Calificacion_MIA/Discos/Disco4.mia",
+    "size": 52428800,
+    "created": "2025-04-29T22:15:23.797908384-06:00",
+    "modified": "2025-04-29T22:15:23.797908556-06:00"
+  },
+  "/home/jorgis/Calificacion_MIA/Discos/Disco5.mia": {
+    "name": "Disco5.mia",
+    "path": "/home/jorgis/Calificacion_MIA/Discos/Disco5.mia",
+    "size": 20971520,
+    "created": "2025-04-29T22:15:23.818748646-06:00",
+    "modified": "2025-04-29T22:15:23.818748885-06:00"
+  }
+}

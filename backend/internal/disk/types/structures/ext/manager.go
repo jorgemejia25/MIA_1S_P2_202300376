@@ -90,15 +90,17 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 	sb.SFreeBlocksCount--
 	sb.SFirstBlo = sb.SBlockStart + sb.SBlockS // Siguiente bloque libre
 
-	// Serializar el journal
+	// Serializar el journal para la carpeta raíz
 	err = AddJournal(path, int64(sb.SBlockStart), sb.SInodesCount,
 		"mkdir",
 		"/",
 		"",
 	)
-
 	if err != nil {
-		return err
+		fmt.Printf("Advertencia: No se pudo registrar la creación de la carpeta raíz en el journaling: %v\n", err)
+		// No retornar error, ya que la carpeta fue creada exitosamente
+	} else {
+		fmt.Println("Creación de carpeta raíz registrada en el journaling")
 	}
 
 	// ----------- Creamos /users.txt -----------
@@ -138,14 +140,17 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 	sb.SFreeInodesCount--
 	sb.SFirstIno += sb.SInodeS // Siguiente inodo libre
 
+	// Serializar el journal para el archivo users.txt
 	err = AddJournal(path, int64(sb.SBlockStart), sb.SInodesCount,
 		"mkfile",
 		"/users.txt",
-		"1,G,root\n1,U,root,root,123\n",
+		usersText,
 	)
-
 	if err != nil {
-		return err
+		fmt.Printf("Advertencia: No se pudo registrar la creación del archivo users.txt en el journaling: %v\n", err)
+		// No retornar error, ya que el archivo fue creado exitosamente
+	} else {
+		fmt.Println("Creación de users.txt registrada en el journaling")
 	}
 
 	// Crear el bloque para el archivo users.txt

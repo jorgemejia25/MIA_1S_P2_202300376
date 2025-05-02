@@ -10,6 +10,9 @@ func main() {
 
 	r.POST("/command", handlers.HandleCommand)
 	r.POST("/login", handlers.HandleLogin)
+	r.POST("/logout", handlers.HandleLogout)
+	r.GET("/disks", handlers.HandleDisk)                      // Ruta para listar discos
+	r.GET("/disks/partitions", handlers.HandleDiskPartitions) // Modificado para usar query param
 
 	r.Run() // Por defecto escucha en :8080
 }

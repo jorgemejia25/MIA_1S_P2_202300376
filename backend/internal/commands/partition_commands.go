@@ -21,10 +21,11 @@ var mkfsCmd = &cobra.Command{
 		fsType, _ := cmd.Flags().GetString("type")
 		fs, _ := cmd.Flags().GetString("fs")
 
-		ext3 := false
+		ext3 := true // Cambiado a true por defecto (ext3)
 
-		if fs == "3fs" {
-			ext3 = true
+		// Solo cambia a false si explícitamente se indica "2fs" (ext2)
+		if fs == "2fs" {
+			ext3 = false
 		}
 
 		if id == "" {
@@ -284,6 +285,87 @@ var moveCmd = &cobra.Command{
 	},
 }
 
+var findCmd = &cobra.Command{
+	Use:   "find",
+	Short: "Find a file or directory",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		path, _ := cmd.Flags().GetString("path")
+		name, _ := cmd.Flags().GetString("name")
+
+		if path == "" || name == "" {
+			return fmt.Errorf("se requieren tanto el path como el nombre")
+		}
+
+		output, err := partition_operations.FindFileOrFolderTree(path, name)
+
+		if err != nil {
+			return fmt.Errorf("error al buscar: %v", err)
+		}
+
+		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		return nil
+	},
+}
+
+var chownCmd = &cobra.Command{
+	Use:   "chown",
+	Short: "Cambiar propietario de un archivo o directorio",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		path, _ := cmd.Flags().GetString("path")
+		usuario, _ := cmd.Flags().GetString("usuario")
+		r, _ := cmd.Flags().GetBool("r")
+
+		if path == "" {
+			return fmt.Errorf("error: se requiere la ruta del archivo o directorio (--path)")
+		}
+
+		if usuario == "" {
+			return fmt.Errorf("error: se requiere el nombre de usuario (--usuario)")
+		}
+
+		// Crear el output formateado
+		output := fmt.Sprintf("Cambiando propietario de %s al usuario %s", path, usuario)
+		if r {
+			output += " (recursivamente)"
+		}
+
+		// Escribir el output en la salida del comando
+		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		return partition_operations.ChangeOwner(path, usuario, r)
+	},
+}
+
+var chmodCmd = &cobra.Command{
+	Use:   "chmod",
+	Short: "Cambiar permisos de un archivo o directorio",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		path, _ := cmd.Flags().GetString("path")
+		ugo, _ := cmd.Flags().GetString("ugo")
+		r, _ := cmd.Flags().GetBool("r")
+
+		if path == "" {
+			return fmt.Errorf("error: se requiere la ruta del archivo o directorio (--path)")
+		}
+
+		if ugo == "" {
+			return fmt.Errorf("error: se requieren los permisos en formato [0-7][0-7][0-7] (--ugo)")
+		}
+
+		// Crear el output formateado
+		output := fmt.Sprintf("Cambiando permisos de %s a %s", path, ugo)
+		if r {
+			output += " (recursivamente)"
+		}
+
+		// Escribir el output en la salida del comando
+		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		return partition_operations.ChangePermissions(path, ugo, r)
+	},
+}
+
 func init() {
 	// MKFS
 	partitionRootCmd.AddCommand(mkfsCmd)
@@ -344,6 +426,29 @@ func init() {
 	moveCmd.PersistentFlags().StringP("destino", "d", "", "Ruta destino")
 	moveCmd.MarkPersistentFlagRequired("path")
 	moveCmd.MarkPersistentFlagRequired("destino")
+
+	// FIND
+	partitionRootCmd.AddCommand(findCmd)
+	findCmd.PersistentFlags().StringP("path", "p", "", "Ruta origen")
+	findCmd.PersistentFlags().StringP("name", "n", "", "Nombre del archivo/directorio a buscar")
+	findCmd.MarkPersistentFlagRequired("path")
+	findCmd.MarkPersistentFlagRequired("name")
+
+	// CHOWN
+	partitionRootCmd.AddCommand(chownCmd)
+	chownCmd.PersistentFlags().StringP("path", "p", "", "Ruta del archivo/directorio")
+	chownCmd.PersistentFlags().StringP("usuario", "u", "", "Nombre del usuario")
+	chownCmd.PersistentFlags().BoolP("r", "r", false, "Cambiar propietario recursivamente")
+	chownCmd.MarkPersistentFlagRequired("path")
+	chownCmd.MarkPersistentFlagRequired("usuario")
+
+	// CHMOD
+	partitionRootCmd.AddCommand(chmodCmd)
+	chmodCmd.PersistentFlags().StringP("path", "p", "", "Ruta del archivo/directorio")
+	chmodCmd.PersistentFlags().StringP("ugo", "u", "", "Permisos en formato [0-7][0-7][0-7]")
+	chmodCmd.PersistentFlags().BoolP("r", "r", false, "Cambiar permisos recursivamente")
+	chmodCmd.MarkPersistentFlagRequired("path")
+	chmodCmd.MarkPersistentFlagRequired("ugo")
 }
 
 // ParsePartitionCommand analiza y ejecuta un comando de partición
@@ -430,5 +535,27 @@ func resetPartitionFlags() {
 	}
 	if moveCmd.Flags().Lookup("destino") != nil {
 		moveCmd.Flags().Set("destino", "")
+	}
+
+	// Reiniciar flags de chown
+	if chownCmd.Flags().Lookup("path") != nil {
+		chownCmd.Flags().Set("path", "")
+	}
+	if chownCmd.Flags().Lookup("usuario") != nil {
+		chownCmd.Flags().Set("usuario", "")
+	}
+	if chownCmd.Flags().Lookup("r") != nil {
+		chownCmd.Flags().Set("r", "false")
+	}
+
+	// Reiniciar flags de chmod
+	if chmodCmd.Flags().Lookup("path") != nil {
+		chmodCmd.Flags().Set("path", "")
+	}
+	if chmodCmd.Flags().Lookup("ugo") != nil {
+		chmodCmd.Flags().Set("ugo", "")
+	}
+	if chmodCmd.Flags().Lookup("r") != nil {
+		chmodCmd.Flags().Set("r", "false")
 	}
 }

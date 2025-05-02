@@ -343,6 +343,17 @@ var repCmd = &cobra.Command{
 			reportProcessed = true
 		}
 
+		if normalizedName == "journaling" {
+			reportText, err := reports.JournalingReport(path, id)
+			if err != nil {
+				return fmt.Errorf("error al generar el reporte de Journaling: %v", err)
+			}
+
+			// Mostrar el reporte de journaling directamente en la consola
+			fmt.Fprintln(cmd.OutOrStdout(), reportText)
+			reportProcessed = true
+		}
+
 		// Solo mostrar el mensaje de error si no se procesó ningún reporte
 		if !reportProcessed {
 			output := fmt.Sprintf("Argumento name: %s desconocido", name)
@@ -413,14 +424,126 @@ var unmountCmd = &cobra.Command{
 	},
 }
 
+var journalingCmd = &cobra.Command{
+	Use:   "journaling",
+	Short: "Muestra información de todas las transacciones realizadas en una partición",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		id, _ := cmd.Flags().GetString("id")
+
+		if id == "" {
+			return fmt.Errorf("el ID es requerido")
+		}
+
+		// Generar el reporte de journaling directamente
+		reportText, err := reports.JournalingReport("", id)
+		if err != nil {
+			return fmt.Errorf("error al generar el reporte de Journaling: %v", err)
+		}
+
+		// Mostrar el reporte de journaling directamente en la consola
+		fmt.Fprintln(cmd.OutOrStdout(), reportText)
+
+		return nil
+	},
+}
+
+var recoveryCmd = &cobra.Command{
+	Use:   "recovery",
+	Short: "Recupera archivos y carpetas desde el journaling",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		id, _ := cmd.Flags().GetString("id")
+
+		if id == "" {
+			return fmt.Errorf("el ID es requerido")
+		}
+
+		// Ejecutar la recuperación desde el journaling
+		output, err := partition_operations.RecoverFromJournaling(id)
+		if err != nil {
+			return fmt.Errorf("error en la recuperación: %v", err)
+		}
+
+		// Imprimir la salida formateada
+		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		return nil
+	},
+}
+
+var lossCmd = &cobra.Command{
+	Use:   "loss",
+	Short: "Simula una pérdida de información en el sistema de archivos",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		id, _ := cmd.Flags().GetString("id")
+
+		if id == "" {
+			return fmt.Errorf("el ID es requerido")
+		}
+
+		// Ejecutar la simulación de pérdida
+		output, err := partition_operations.SimulateSystemLoss(id)
+		if err != nil {
+			return fmt.Errorf("error en la simulación de pérdida: %v", err)
+		}
+
+		// Imprimir la salida formateada
+		fmt.Fprintln(cmd.OutOrStdout(), output)
+
+		return nil
+	},
+}
+
+var disklistCmd = &cobra.Command{
+	Use:   "disklist",
+	Short: "Listar todos los discos creados",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Obtener información de los discos
+		disksInfo, err := disk_operations.GetDisksInfo()
+		if err != nil {
+			return err
+		}
+
+		// Imprimir la información de los discos
+		fmt.Fprintln(cmd.OutOrStdout(), disksInfo)
+		return nil
+	},
+}
+
+var partlistCmd = &cobra.Command{
+	Use:   "partlist",
+	Short: "Listar todas las particiones de un disco",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		path, _ := cmd.Flags().GetString("path")
+
+		if path == "" {
+			return fmt.Errorf("el parámetro path es requerido")
+		}
+
+		// Obtener información de las particiones
+		partitionsInfo, err := partition_operations.GetPartitionsInfo(path)
+		if err != nil {
+			return err
+		}
+
+		// Imprimir la información de las particiones
+		fmt.Fprintln(cmd.OutOrStdout(), partitionsInfo)
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(mkdiskCmd)
 	rootCmd.AddCommand(rmdiskCmd)
 	rootCmd.AddCommand(repCmd)
-	rootCmd.AddCommand(fdiskCmd) // Asegúrate de agregar el comando fdisk al rootCmd
+	rootCmd.AddCommand(fdiskCmd)
 	rootCmd.AddCommand(mountedCmd)
 	rootCmd.AddCommand(mountCmd)
 	rootCmd.AddCommand(unmountCmd)
+	rootCmd.AddCommand(journalingCmd)
+	rootCmd.AddCommand(recoveryCmd)
+	rootCmd.AddCommand(lossCmd)
+	rootCmd.AddCommand(disklistCmd)
+	rootCmd.AddCommand(partlistCmd)
 
 	// MKDISK
 	mkdiskCmd.PersistentFlags().IntP("size", "s", 0, "Size of the disk in MB or KB") // Agregar alias -s para --size
@@ -473,6 +596,22 @@ func init() {
 	// UNMOUNT
 	unmountCmd.PersistentFlags().StringP("id", "i", "", "ID of the partition to unmount")
 	unmountCmd.MarkPersistentFlagRequired("id")
+
+	// JOURNALING
+	journalingCmd.PersistentFlags().StringP("id", "i", "", "ID de la partición para mostrar el journaling")
+	journalingCmd.MarkPersistentFlagRequired("id")
+
+	// RECOVERY
+	recoveryCmd.PersistentFlags().StringP("id", "i", "", "ID de la partición para recuperar archivos desde el journaling")
+	recoveryCmd.MarkPersistentFlagRequired("id")
+
+	// LOSS
+	lossCmd.PersistentFlags().StringP("id", "i", "", "ID de la partición para simular pérdida de sistema")
+	lossCmd.MarkPersistentFlagRequired("id")
+
+	// PARTLIST
+	partlistCmd.PersistentFlags().StringP("path", "p", "", "Ruta del disco")
+	partlistCmd.MarkPersistentFlagRequired("path")
 }
 
 // ParseDiskCommand analiza y ejecuta un comando de disco
@@ -572,5 +711,25 @@ func resetFlags() {
 	// Reiniciar flags de unmount
 	if unmountCmd.Flags().Lookup("id") != nil {
 		unmountCmd.Flags().Set("id", "")
+	}
+
+	// Reiniciar flags de journaling
+	if journalingCmd.Flags().Lookup("id") != nil {
+		journalingCmd.Flags().Set("id", "")
+	}
+
+	// Reiniciar flags de recovery
+	if recoveryCmd.Flags().Lookup("id") != nil {
+		recoveryCmd.Flags().Set("id", "")
+	}
+
+	// Reiniciar flags de loss
+	if lossCmd.Flags().Lookup("id") != nil {
+		lossCmd.Flags().Set("id", "")
+	}
+
+	// Reiniciar flags de partlist
+	if partlistCmd.Flags().Lookup("path") != nil {
+		partlistCmd.Flags().Set("path", "")
 	}
 }

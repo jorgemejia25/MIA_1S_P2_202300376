@@ -198,6 +198,7 @@ mkdir -p -path=/home/archivos/carpeta1/carpeta2/carpeta3/carpeta4/carpeta5
 #-----------------8. LOGOUT-----------------
 logout
 
+# ------ FASE 2
 
 #-----------------7. LOGIN-----------------
 #Validar un inicio de sesión para un usuario creado
@@ -233,3 +234,4 @@ mkfile -path=/home/archivos/user/docs/Tarea3.txt -size=10 -cont=/home/jorgis/Cal
 #RECURSIVO
 mkfile -r -path=/home/archivos/user/docs/usac/archivos/proyectos/fase1/entrada.txt
 
+journaling -id=761A

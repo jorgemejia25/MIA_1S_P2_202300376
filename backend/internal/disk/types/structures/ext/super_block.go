@@ -295,19 +295,3 @@ func (sb *SuperBlock) GetBlockByNumber(path string, blockNumber int32) (interfac
 	return nil, fmt.Errorf("no se pudo determinar el tipo del bloque %d", blockNumber)
 }
 
-// GetInodeByNumber obtiene un inodo según su número
-func (sb *SuperBlock) GetInodeByNumber(path string, inodeNumber int32) (*INode, error) {
-	if inodeNumber < 0 || inodeNumber >= sb.SInodesCount {
-		return nil, fmt.Errorf("número de inodo %d fuera de rango (0-%d)", inodeNumber, sb.SInodesCount-1)
-	}
-
-	offset := int64(sb.SInodeStart + (inodeNumber * sb.SInodeS))
-	inode := &INode{}
-
-	err := inode.Deserialize(path, offset)
-	if err != nil {
-		return nil, fmt.Errorf("error al deserializar inodo %d: %v", inodeNumber, err)
-	}
-
-	return inode, nil
-}

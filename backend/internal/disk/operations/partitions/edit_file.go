@@ -10,7 +10,7 @@ import (
 	"disk.simulator.com/m/v2/utils"
 )
 
-func EditFile(path string, contenido string) error {
+func EditFile(path string, contentPath string) error {
 	instance := auth.GetInstance()
 
 	if instance.User == nil {
@@ -36,12 +36,46 @@ func EditFile(path string, contenido string) error {
 	// Obtener directorios padre y nombre de archivo
 	parentDirs, fileName := utils.GetParentDirectories(path)
 
-	return superBlock.EditFile(
+	// Llamar a la función EditFile con la ruta del archivo que contiene el contenido
+	err = superBlock.EditFile(
 		partitionPath, // Ruta física de la partición
 		parentDirs,    // Directorios padre
 		fileName,      // Nombre del archivo
-		contenido,     // Nuevo contenido
+		contentPath,   // Ruta al archivo que contiene el nuevo contenido
 		int32(uidInt), // UID
 		int32(gidInt), // GID
 	)
+
+	if err != nil {
+		return fmt.Errorf("error al editar archivo: %v", err)
+	}
+
+	// Si el sistema de archivos es ext3, registrar la operación en el journaling
+	if superBlock.SFilesystemType == 3 {
+		// Registrar la operación en el journal
+		err = ext2.AddJournal(
+			partitionPath,
+			int64(partition.Partition.Part_start),
+			0, // Este parámetro es ignorado ahora
+			"edit",
+			path,
+			"(contenido de archivo actualizado)",
+		)
+
+		if err != nil {
+			fmt.Printf("Advertencia: No se pudo registrar la operación en el journaling: %v\n", err)
+			// No retornar error, ya que el archivo fue editado exitosamente
+		} else {
+			fmt.Println("Operación registrada en el journaling")
+		}
+	}
+
+	// Actualizar el superbloque con los cambios
+	err = superBlock.SerializeSuperBlock(partitionPath, partition.Partition.Part_start)
+	if err != nil {
+		return fmt.Errorf("error al actualizar el superbloque: %v", err)
+	}
+
+	fmt.Printf("Archivo '%s' editado exitosamente\n", path)
+	return nil
 }

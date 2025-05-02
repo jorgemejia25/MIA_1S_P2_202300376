@@ -1,24 +1,32 @@
-import React from "react";
-import RefreshButton from "../atoms/RefreshButton";
-import ViewModeToggle from "../atoms/ViewModeToggle";
+"use client";
 
-interface ToolBarProps {
-  loading: boolean;
+import RefreshButton from "@/components/atoms/RefreshButton";
+import ViewModeToggle from "@/components/atoms/ViewModeToggle";
+
+type ToolBarProps = {
+  loading?: boolean;
   viewMode: "grid" | "list";
   onRefresh: () => void;
   onViewModeChange: (mode: "grid" | "list") => void;
-}
+};
 
-const ToolBar: React.FC<ToolBarProps> = ({
-  loading,
+const ToolBar = ({
+  loading = false,
   viewMode,
   onRefresh,
   onViewModeChange,
-}) => {
+}: ToolBarProps) => {
   return (
-    <div className="flex justify-between items-center mb-6">
-      <RefreshButton onClick={onRefresh} loading={loading} />
-      <ViewModeToggle viewMode={viewMode} onViewModeChange={onViewModeChange} />
+    <div className="bg-neutral-800/60 backdrop-blur-sm rounded-xl p-3 mb-4 flex justify-between items-center ring-1 ring-neutral-700">
+      <div className="flex items-center space-x-2">
+        <RefreshButton loading={loading} onRefresh={onRefresh} />
+      </div>
+      <div className="flex items-center">
+        <ViewModeToggle
+          viewMode={viewMode}
+          onViewModeChange={onViewModeChange}
+        />
+      </div>
     </div>
   );
 };

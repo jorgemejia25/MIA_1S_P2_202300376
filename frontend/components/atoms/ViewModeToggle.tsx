@@ -1,69 +1,39 @@
-import React from "react";
+"use client";
 
-interface ViewModeToggleProps {
+import { HiOutlineViewGrid, HiOutlineViewList } from "react-icons/hi";
+
+type ViewModeToggleProps = {
   viewMode: "grid" | "list";
   onViewModeChange: (mode: "grid" | "list") => void;
-}
+};
 
-const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
+const ViewModeToggle = ({
   viewMode,
   onViewModeChange,
-}) => {
+}: ViewModeToggleProps) => {
   return (
-    <div className="flex space-x-2">
+    <div className="flex items-center space-x-1 bg-neutral-800/80 rounded-lg p-1">
       <button
         onClick={() => onViewModeChange("grid")}
-        className={`p-2 rounded-md ${
+        className={`p-1.5 rounded-md transition-colors ${
           viewMode === "grid"
-            ? "bg-neutral-700"
-            : "bg-neutral-800 hover:bg-neutral-700"
+            ? "bg-emerald-900/40 text-emerald-300"
+            : "text-gray-400 hover:text-gray-200 hover:bg-neutral-700/50"
         }`}
+        title="Vista en cuadrícula"
       >
-        <span className="sr-only">Grid view</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="3" y="3" width="7" height="7"></rect>
-          <rect x="14" y="3" width="7" height="7"></rect>
-          <rect x="14" y="14" width="7" height="7"></rect>
-          <rect x="3" y="14" width="7" height="7"></rect>
-        </svg>
+        <HiOutlineViewGrid className="h-5 w-5" />
       </button>
       <button
         onClick={() => onViewModeChange("list")}
-        className={`p-2 rounded-md ${
+        className={`p-1.5 rounded-md transition-colors ${
           viewMode === "list"
-            ? "bg-neutral-700"
-            : "bg-neutral-800 hover:bg-neutral-700"
+            ? "bg-emerald-900/40 text-emerald-300"
+            : "text-gray-400 hover:text-gray-200 hover:bg-neutral-700/50"
         }`}
+        title="Vista en lista"
       >
-        <span className="sr-only">List view</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="8" y1="6" x2="21" y2="6"></line>
-          <line x1="8" y1="12" x2="21" y2="12"></line>
-          <line x1="8" y1="18" x2="21" y2="18"></line>
-          <line x1="3" y1="6" x2="3.01" y2="6"></line>
-          <line x1="3" y1="12" x2="3.01" y2="12"></line>
-          <line x1="3" y1="18" x2="3.01" y2="18"></line>
-        </svg>
+        <HiOutlineViewList className="h-5 w-5" />
       </button>
     </div>
   );

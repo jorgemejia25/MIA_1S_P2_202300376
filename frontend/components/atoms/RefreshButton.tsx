@@ -1,22 +1,27 @@
+"use client";
+
 import { HiOutlineRefresh } from "react-icons/hi";
-import React from "react";
 
-interface RefreshButtonProps {
-  onClick: () => void;
-  loading: boolean;
-}
+type RefreshButtonProps = {
+  loading?: boolean;
+  onRefresh: () => void;
+};
 
-const RefreshButton: React.FC<RefreshButtonProps> = ({ onClick, loading }) => {
+const RefreshButton = ({ loading = false, onRefresh }: RefreshButtonProps) => {
   return (
     <button
-      onClick={onClick}
-      className="flex items-center p-2 px-3 rounded-md bg-blue-600 hover:bg-blue-700 transition-colors"
+      onClick={onRefresh}
       disabled={loading}
+      className={`flex items-center justify-center p-2 rounded-md transition-colors 
+        ${loading 
+          ? "bg-neutral-700/50 text-gray-500 cursor-not-allowed" 
+          : "bg-neutral-800/80 text-gray-300 hover:text-emerald-300 hover:bg-neutral-700/80"
+        }`}
+      title="Refrescar"
     >
-      <HiOutlineRefresh
-        className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+      <HiOutlineRefresh 
+        className={`h-5 w-5 ${loading ? "animate-spin" : ""}`} 
       />
-      <span>{loading ? "Cargando..." : "Actualizar"}</span>
     </button>
   );
 };

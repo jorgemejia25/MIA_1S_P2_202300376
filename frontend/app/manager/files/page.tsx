@@ -1,22 +1,31 @@
 "use client";
 
-import { HiOutlineFolderOpen, HiOutlineInformationCircle } from "react-icons/hi";
-import React, { useState } from "react";
+import { DirectoryContent, FileContent, FileInfo } from "@/types/FileSystem";
+import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import ErrorMessage from "@/components/atoms/ErrorMessage";
-import LoadingSpinner from "@/components/atoms/LoadingSpinner";
-import PageHeader from "@/components/organisms/PageHeader";
-import ToolBar from "@/components/organisms/ToolBar";
-import { useSearchParams } from "next/navigation";
+import FilesPageTemplate from "@/components/templates/FilesPageTemplate";
+import { listDirectory } from "@/actions/listDirectory";
+import { readFileContent } from "@/actions/readFileContent";
 
 const FilesPage = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialPath = searchParams.get("path") || "/";
+  const diskPath = searchParams.get("diskPath") || "";
+  const partitionName = searchParams.get("partitionName") || "";
 
   const [currentPath, setCurrentPath] = useState(initialPath);
-  const [loading, setLoading] = useState(false);
+  const [directoryContent, setDirectoryContent] =
+    useState<DirectoryContent | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // Estado para manejar el archivo seleccionado y su contenido
+  const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
+  const [fileContent, setFileContent] = useState<FileContent | null>(null);
+  const [loadingContent, setLoadingContent] = useState(false);
 
   // Dividir la ruta en segmentos para la barra de navegación
   const pathSegments = currentPath
@@ -34,15 +43,110 @@ const FilesPage = () => {
 
   const handlePathChange = (newPath: string) => {
     setCurrentPath(newPath);
-    // Aquí posteriormente se cargarían los archivos y carpetas de la nueva ruta
+    loadDirectory(diskPath, partitionName, newPath);
+
+    // Cerrar el visor de archivos si está abierto
+    setSelectedFile(null);
+    setFileContent(null);
+
+    // Actualizar la URL con el nuevo path
+    const params = new URLSearchParams(searchParams);
+    params.set("path", newPath);
+    router.replace(`/manager/files?${params.toString()}`);
+  };
+
+  const handleFileClick = async (file: FileInfo) => {
+    if (file.type === "directory") {
+      // Construir la nueva ruta para navegación
+      const newPath = currentPath.endsWith("/")
+        ? `${currentPath}${file.name}`
+        : `${currentPath}/${file.name}`;
+      handlePathChange(newPath);
+    } else {
+      // Es un archivo, mostrar su contenido
+      setSelectedFile(file);
+      loadFileContent(file);
+    }
+  };
+
+  const loadFileContent = async (file: FileInfo) => {
+    if (!diskPath || !partitionName) {
+      setError("Se requiere especificar un disco y una partición");
+      return;
+    }
+
+    setLoadingContent(true);
+
+    try {
+      // Construir la ruta del archivo
+      const filePath =
+        currentPath === "/" ? `/${file.name}` : `${currentPath}/${file.name}`;
+
+      const content = await readFileContent(diskPath, partitionName, filePath);
+      setFileContent(content);
+
+      if (!content.success) {
+        setError(content.message || "Error al cargar el contenido del archivo");
+      }
+    } catch (err) {
+      console.error("Error al cargar el contenido del archivo:", err);
+      setError("Error al cargar el contenido del archivo");
+    } finally {
+      setLoadingContent(false);
+    }
+  };
+
+  const closeFileViewer = () => {
+    setSelectedFile(null);
+    setFileContent(null);
   };
 
   const handleRefresh = async () => {
+    loadDirectory(diskPath, partitionName, currentPath);
+  };
+
+  const handleViewModeChange = (mode: "grid" | "list") => {
+    setViewMode(mode);
+  };
+
+  // Función para manejar la navegación al Journaling
+  const handleJournalingClick = () => {
+    if (!diskPath || !partitionName) {
+      setError(
+        "Se requiere especificar un disco y una partición para ver el journaling"
+      );
+      return;
+    }
+
+    // Navegar a la página de journaling con los parámetros necesarios
+    router.push(
+      `/manager/journaling?diskPath=${diskPath}&partitionName=${partitionName}`
+    );
+  };
+
+  const loadDirectory = async (
+    disk: string,
+    partition: string,
+    path: string
+  ) => {
+    if (!disk || !partition) {
+      setError("Se requiere especificar un disco y una partición");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
+    setError(null);
+
     try {
-      // Aquí se llamaría a una función para cargar los archivos
-      // Por ahora solo simulamos un retraso
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await listDirectory(disk, partition, path);
+
+      if (response.success && response.content) {
+        setDirectoryContent(response.content);
+      } else {
+        setError(response.message || "Error al cargar el directorio");
+        setDirectoryContent(null);
+      }
     } catch (err) {
       setError("Error al cargar los archivos");
       console.error(err);
@@ -51,128 +155,29 @@ const FilesPage = () => {
     }
   };
 
-  const handleViewModeChange = (mode: "grid" | "list") => {
-    setViewMode(mode);
-  };
+  // Cargar directorio al iniciar
+  useEffect(() => {
+    loadDirectory(diskPath, partitionName, currentPath);
+  }, [diskPath, partitionName, currentPath]);
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <PageHeader
-        title="Explorador de Archivos"
-        description="Navega por el sistema de archivos y gestiona tus directorios y archivos."
-      />
-
-      <ToolBar
-        loading={loading}
-        viewMode={viewMode}
-        onRefresh={handleRefresh}
-        onViewModeChange={handleViewModeChange}
-      />
-
-      <ErrorMessage message={error} />
-
-      {/* Barra de navegación de directorio con la temática de DiskCard */}
-      <div className="bg-neutral-800/60 backdrop-blur-sm rounded-xl overflow-hidden p-4 mb-4 ring-1 ring-neutral-700 hover:ring-emerald-400/30 transition-all">
-        <div className="flex flex-wrap items-center">
-          {breadcrumbItems.map((item, index) => (
-            <React.Fragment key={item.path}>
-              <button
-                onClick={() => handlePathChange(item.path)}
-                className={`text-sm hover:bg-neutral-700/30 px-3 py-1.5 rounded transition-colors ${
-                  index === breadcrumbItems.length - 1
-                    ? "bg-emerald-900/30 text-emerald-300 font-medium"
-                    : "text-gray-300"
-                }`}
-              >
-                {index === 0 ? (
-                  <span className="flex items-center">
-                    <HiOutlineFolderOpen className="h-4 w-4 mr-1.5 text-emerald-400" />
-                    Raíz
-                  </span>
-                ) : (
-                  item.name
-                )}
-              </button>
-              {index < breadcrumbItems.length - 1 && (
-                <span className="mx-2 text-gray-600">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-4 w-4" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M9 5l7 7-7 7" 
-                    />
-                  </svg>
-                </span>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-
-        <div className="mt-3 border-t border-neutral-700 pt-2">
-          <div className="flex items-center p-2 rounded-lg bg-neutral-700/30 text-xs text-gray-400">
-            <HiOutlineInformationCircle className="h-4 w-4 mr-1.5 text-gray-400" />
-            <span className="font-medium mr-1.5">Ruta actual:</span>
-            <code className="font-mono text-xs text-gray-300 truncate">
-              {currentPath}
-            </code>
-          </div>
-        </div>
-      </div>
-
-      {loading && <LoadingSpinner />}
-
-      {/* Contenedor de archivos con la temática de DiskCard */}
-      <div className="bg-neutral-800/60 backdrop-blur-sm rounded-xl overflow-hidden p-5 ring-1 ring-neutral-700">
-        {!loading && (
-          <div className="text-center p-10">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="mx-auto h-14 w-14 text-neutral-700" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={1.5} 
-                d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" 
-              />
-            </svg>
-            <p className="mt-4 text-gray-400">
-              No hay archivos para mostrar en este directorio
-            </p>
-            <button 
-              onClick={handleRefresh}
-              className="mt-5 inline-flex items-center px-4 py-2 rounded-md text-white bg-neutral-700 hover:bg-neutral-600 transition-colors"
-            >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-4 w-4 mr-2" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-                />
-              </svg>
-              Refrescar directorio
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+    <FilesPageTemplate
+      currentPath={currentPath}
+      directoryContent={directoryContent}
+      loading={loading}
+      error={error}
+      viewMode={viewMode}
+      selectedFile={selectedFile}
+      fileContent={fileContent}
+      loadingContent={loadingContent}
+      pathSegments={breadcrumbItems}
+      onPathChange={handlePathChange}
+      onFileClick={handleFileClick}
+      onCloseFileViewer={closeFileViewer}
+      onRefresh={handleRefresh}
+      onViewModeChange={handleViewModeChange}
+      onJournalingClick={handleJournalingClick}
+    />
   );
 };
 

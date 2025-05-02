@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Partition } from "@/types/Partition";
 import PartitionsPageTemplate from "@/components/templates/PartitionsPageTemplate";
 import { listPartitions } from "@/actions/listPartitions";
-import { useSearchParams } from "next/navigation";
 
 const PartitionsPage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const diskPath = searchParams.get("path");
 
   const [partitions, setPartitions] = useState<Partition[]>([]);
@@ -18,17 +19,6 @@ const PartitionsPage = () => {
     null
   );
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
-  useEffect(() => {
-    // Si tenemos el path del disco, cargar sus particiones
-    if (diskPath) {
-      fetchPartitions();
-    } else {
-      setError("No se ha seleccionado ningún disco");
-      setLoading(false);
-    }
-  }, [diskPath]);
-
   const fetchPartitions = async () => {
     try {
       setLoading(true);
@@ -49,6 +39,16 @@ const PartitionsPage = () => {
     }
   };
 
+  useEffect(() => {
+    // Si tenemos el path del disco, cargar sus particiones
+    if (diskPath) {
+      fetchPartitions();
+    } else {
+      setError("No se ha seleccionado ningún disco");
+      setLoading(false);
+    }
+  }, [diskPath]); // fetchPartitions no necesita estar en las dependencias ya que es estable
+
   // Función para recargar la lista de particiones
   const handleRefresh = async () => {
     if (diskPath) {
@@ -59,8 +59,12 @@ const PartitionsPage = () => {
   // Función para manejar la selección de una partición
   const handlePartitionSelection = (name: string) => {
     setSelectedPartition(name);
-    // Aquí podríamos añadir funcionalidad adicional al seleccionar una partición
-    // como mostrar detalles, opciones para formatear, etc.
+    // Redireccionar a la página de archivos con los parámetros de disco y partición
+    router.push(
+      `/manager/files?diskPath=${encodeURIComponent(
+        diskPath || ""
+      )}&partitionName=${encodeURIComponent(name)}`
+    );
   };
 
   // Función para cambiar el modo de visualización

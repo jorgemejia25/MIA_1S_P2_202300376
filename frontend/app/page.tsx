@@ -12,6 +12,7 @@ export default function Home() {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("// Salida del código aquí...");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -26,8 +27,10 @@ export default function Home() {
   };
 
   const handleExecute = async () => {
+    setIsLoading(true);
     const result = await sendCommand(code);
     setOutput(result);
+    setIsLoading(false);
   };
 
   const handleClear = () => {
@@ -106,6 +109,7 @@ export default function Home() {
             code={code}
             output={output}
             onCodeChange={handleCodeChange}
+            isLoading={isLoading}
           />
         </div>
       </main>

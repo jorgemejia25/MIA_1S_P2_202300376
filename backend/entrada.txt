@@ -54,7 +54,7 @@ mkdir -path=/calificacion/MOVE
 remove -path=/calificacion/TEST/borrar.txt
 
 #******************** EDIT ********************
-edit -path=/calificacion/TEST/nombre.txt -contenido=/discos/entrada/NAME.txt
+edit -path=/calificacion/TEST/nombre.txt -contenido=/discos/NAME.txt
 
 #******************** RENAME ********************
 rename -path=/calificacion/TEST/cambio.txt -name=cambiado.txt

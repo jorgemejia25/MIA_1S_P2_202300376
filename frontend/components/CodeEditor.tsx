@@ -9,12 +9,14 @@ interface CodeEditorProps {
   code?: string;
   output: string;
   onCodeChange: (code: string) => void;
+  isLoading?: boolean;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   code = "",
   output,
   onCodeChange,
+  isLoading = false,
 }) => {
   const monaco = useMonaco();
 
@@ -53,7 +55,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       "unmount",
       "mkfs",
       "recovery",
-      "journaling"
+      "journaling",
     ];
 
     const flags = [
@@ -247,7 +249,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           value={code}
         />
       </div>
-      <div className="rounded-xl overflow-hidden w-1/2">
+      <div className="rounded-xl overflow-hidden w-1/2 relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-black/70 z-10 flex items-center justify-center">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-3 text-teal-400 font-medium">
+                Procesando comando...
+              </p>
+            </div>
+          </div>
+        )}
         <Editor
           className="rounded-editor"
           height="62vh"

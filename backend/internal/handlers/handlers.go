@@ -95,13 +95,13 @@ func HandleCommand(c *gin.Context) {
 
 // isDiskCommand verifica si el comando es un comando de disco
 func isDiskCommand(cmd string) bool {
-	diskCommands := []string{"mkdisk", "rmdisk", "fdisk", "rep", "mount", "mounted"}
+	diskCommands := []string{"mkdisk", "rmdisk", "fdisk", "rep", "mount", "mounted", "unmount", "journaling", "recovery", "loss"}
 	return containsIgnoreCase(diskCommands, cmd)
 }
 
 // isPartitionCommand verifica si el comando es un comando de partición
 func isPartitionCommand(cmd string) bool {
-	partitionCommands := []string{"mkfs", "mkdir", "mkfile", "cat"}
+	partitionCommands := []string{"mkfs", "mkdir", "mkfile", "cat", "rename", "move", "copy", "find", "chown", "chmod", "rm", "edit", "ls", "df", "du", "stat", "cp", "mv", "remove"}
 	return containsIgnoreCase(partitionCommands, cmd)
 }
 
@@ -115,6 +115,7 @@ func isAuthCommand(cmd string) bool {
 func containsIgnoreCase(slice []string, s string) bool {
 	for _, item := range slice {
 		if strings.EqualFold(item, s) {
+
 			return true
 		}
 	}

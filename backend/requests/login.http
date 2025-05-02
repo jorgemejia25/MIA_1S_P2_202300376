@@ -1,0 +1,39 @@
+### Prueba de login exitoso
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "partition": "761A",
+    "username": "root",
+    "password": "123"
+}
+
+### Prueba de login con credenciales incorrectas
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "partition": "vda1",
+    "username": "usuario_incorrecto",
+    "password": "password_incorrecto"
+}
+
+### Prueba de login con partición inexistente
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "partition": "particion_inexistente",
+    "username": "root",
+    "password": "123456"
+}
+
+### Prueba de login con JSON inválido (para probar error 400)
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "partition": "vda1",
+    "username": "root"
+    // falta la coma y el campo password
+}

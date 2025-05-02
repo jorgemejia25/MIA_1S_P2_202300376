@@ -49,6 +49,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       "mount",
       "mounted",
       "fdisk",
+      "loss",
+      "unmount",
+      "mkfs",
+      "recovery",
+      "journaling"
     ];
 
     const flags = [

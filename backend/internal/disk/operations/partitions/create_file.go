@@ -7,7 +7,7 @@ import (
 
 	"disk.simulator.com/m/v2/internal/disk/memory"
 	"disk.simulator.com/m/v2/internal/disk/operations/auth"
-	"disk.simulator.com/m/v2/internal/disk/types/structures/ext2"
+	ext2 "disk.simulator.com/m/v2/internal/disk/types/structures/ext"
 	"disk.simulator.com/m/v2/utils"
 )
 
@@ -75,6 +75,34 @@ func CreateFile(
 	err = superBlock.SerializeSuperBlock(partitionPath, partition.Partition.Part_start)
 	if err != nil {
 		return fmt.Errorf("error al actualizar el superbloque: %v", err)
+	}
+
+	// Si el sistema de archivos es ext3, registrar la operación en el journaling
+	if superBlock.SFilesystemType == 3 {
+		// Preparar el contenido para el journal (contenido truncado si es muy largo)
+		journalContent := ""
+		if len(content) > 60 { // El campo I_content tiene un tamaño limitado
+			journalContent = string(content[:60]) + "..."
+		} else {
+			journalContent = string(content)
+		}
+
+		// Registrar la operación en el journal
+		err = ext2.AddJournal(
+			partitionPath,
+			int64(partition.Partition.Part_start),
+			0, // Este parámetro es ignorado ahora
+			"mkfile",
+			dirPath,
+			journalContent,
+		)
+
+		if err != nil {
+			fmt.Printf("Advertencia: No se pudo registrar la operación en el journaling: %v\n", err)
+			// No retornar error, ya que el archivo fue creado exitosamente
+		} else {
+			fmt.Println("Operación registrada en el journaling")
+		}
 	}
 
 	fmt.Printf("Archivo '%s' creado exitosamente en '%s'\n", destFile, dirPath)

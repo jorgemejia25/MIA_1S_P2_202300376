@@ -8,11 +8,11 @@ import (
 
 	"disk.simulator.com/m/v2/internal/disk/memory"
 	"disk.simulator.com/m/v2/internal/disk/types/structures"
-	"disk.simulator.com/m/v2/internal/disk/types/structures/ext2"
+	ext2 "disk.simulator.com/m/v2/internal/disk/types/structures/ext"
 	"disk.simulator.com/m/v2/utils"
 )
 
-func FormatPartition(id string, formatType string) error {
+func FormatPartition(id string, formatType string, ext3 bool) error {
 	// Aquí iría la lógica para formatear la partición
 	partition, path, err := memory.GetInstance().GetMountedPartition(id)
 
@@ -50,15 +50,25 @@ func FormatPartition(id string, formatType string) error {
 	n := CalculateN(&partition.Partition)
 
 	fmt.Println("N: ", n)
+	journalSize := int32(binary.Size(ext2.Journal{}))
 
-	SBmInodeStart := partition.Partition.Part_start + int32(binary.Size(ext2.SuperBlock{}))
+	JournalStart := partition.Partition.Part_start + int32(binary.Size(ext2.SuperBlock{}))
+
+	var SBmInodeStart int32
+
+	if ext3 {
+		SBmInodeStart = JournalStart + (journalSize * n)
+	} else {
+		SBmInodeStart = partition.Partition.Part_start + int32(binary.Size(ext2.SuperBlock{}))
+	}
+
 	SBmBlockStart := SBmInodeStart + n
 	SInodeStart := SBmBlockStart + (3 * n)
 	SBlockStart := SInodeStart + (int32(ext2.INodeSize * n))
 
 	// Crear el SuperBloque del sistema de archivos
 	superBlock := ext2.SuperBlock{
-		SFilesystemType:  2,
+		SFilesystemType:  3, // Cambiado de 2 (ext2) a 3 (ext3)
 		SInodesCount:     0,
 		SBlocksCount:     0,
 		SFreeBlocksCount: int32(n * 3),
@@ -91,10 +101,35 @@ func FormatPartition(id string, formatType string) error {
 	fmt.Println(superBlock.SInodeStart)
 	fmt.Println(superBlock.SBlockStart)
 
-	err = superBlock.CreateBitMaps(path)
+	if ext3 {
+		err = superBlock.CreateBitMaps(path)
+		if err != nil {
+			return err
+		}
 
-	if err != nil {
-		return err
+		// Inicializar estructuras de journaling para ext3
+		journalStart := partition.Partition.Part_start + int32(binary.Size(ext2.SuperBlock{}))
+
+		// Inicializar cada entrada de journal con valores por defecto
+		for i := int32(0); i < n; i++ {
+			journal := ext2.Journal{
+				J_count: i,
+				J_content: ext2.Information{
+					I_operation: [10]byte{},
+					I_path:      [100]byte{},
+					I_content:   [200]byte{},
+					I_date:      0,
+				},
+			}
+
+			// Serializar el journal en el archivo
+			err := journal.Serialize(path, int64(journalStart))
+			if err != nil {
+				return fmt.Errorf("error al inicializar el journal %d: %v", i, err)
+			}
+		}
+
+		fmt.Printf("Se inicializaron %d estructuras de journaling\n", n)
 	}
 
 	// Crear el archivo users.txt

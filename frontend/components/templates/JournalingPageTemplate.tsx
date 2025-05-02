@@ -1,5 +1,4 @@
 import React from "react";
-import { HiOutlineDocumentText } from "react-icons/hi";
 import { JournalEntry } from "@/components/molecules/JournalEntryCard";
 import LoadingSpinner from "@/components/atoms/LoadingSpinner";
 import ErrorMessage from "@/components/atoms/ErrorMessage";
@@ -49,15 +48,11 @@ const JournalingPageTemplate: React.FC<JournalingPageTemplateProps> = ({
         {/* Contenido principal */}
         {loading ? (
           <div className="py-12">
-            <LoadingSpinner
-              center
-              message="Cargando entradas de journaling..."
-            />
+            <LoadingSpinner />
           </div>
         ) : journalEntries.length === 0 ? (
           <div className="py-16">
             <EmptyState
-              icon={<HiOutlineDocumentText className="w-16 h-16" />}
               title="No hay entradas de journaling"
               description="Esta partición no tiene operaciones registradas en el journaling o no tiene habilitado ext3."
             />

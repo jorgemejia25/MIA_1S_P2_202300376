@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 const inter = Inter({
   // variable: "--font-raleway",
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased gap-16  bg-gradient-to-b from-black to-neutral-900 text-white min-h-screen`}
       >
-        {children}
+        <Suspense fallback={<div className="text-center p-10">Cargando...</div>}>
+          {children}
+        </Suspense>
       </body>
     </html>
   );

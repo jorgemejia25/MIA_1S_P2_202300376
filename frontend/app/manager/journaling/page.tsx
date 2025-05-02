@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { JournalEntry } from "@/components/molecules/JournalEntryCard";
@@ -20,7 +20,7 @@ const JournalingPage = () => {
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
 
   // Cargar los datos del journaling
-  const loadJournalingData = async () => {
+  const loadJournalingData = useCallback(async () => {
     if (!diskPath || !partitionName) {
       setError("Se requiere especificar un disco y una partición");
       setLoading(false);
@@ -44,12 +44,12 @@ const JournalingPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [diskPath, partitionName]);
 
   // Cargar datos al iniciar
   useEffect(() => {
     loadJournalingData();
-  }, [diskPath, partitionName]);
+  }, [loadJournalingData]);
 
   // Manejadores de eventos
   const handleEntryClick = (entry: JournalEntry) => {

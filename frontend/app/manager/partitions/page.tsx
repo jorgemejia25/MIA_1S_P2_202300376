@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Partition } from "@/types/Partition";
@@ -19,7 +19,8 @@ const PartitionsPage = () => {
     null
   );
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const fetchPartitions = async () => {
+
+  const fetchPartitions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await listPartitions(diskPath!);
@@ -37,7 +38,7 @@ const PartitionsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [diskPath]);
 
   useEffect(() => {
     // Si tenemos el path del disco, cargar sus particiones
@@ -47,7 +48,7 @@ const PartitionsPage = () => {
       setError("No se ha seleccionado ningún disco");
       setLoading(false);
     }
-  }, [diskPath]); // fetchPartitions no necesita estar en las dependencias ya que es estable
+  }, [diskPath, fetchPartitions]);
 
   // Función para recargar la lista de particiones
   const handleRefresh = async () => {

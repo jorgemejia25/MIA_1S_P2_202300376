@@ -1,5 +1,3 @@
-"use server";
-
 import { Partition } from "@/types/Partition";
 
 type ListPartitionsResponse = {
@@ -15,7 +13,8 @@ export async function listPartitions(
   path: string
 ): Promise<ListPartitionsResponse> {
   try {
-    const apiUrl = process.env.API_URL || "http://localhost:8080";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://54.196.151.70:8080";
     const response = await fetch(
       `${apiUrl}/disks/partitions?path=${encodeURIComponent(path)}`,
       {

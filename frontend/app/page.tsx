@@ -1,14 +1,32 @@
 "use client";
 
+import { Suspense } from "react";
+
+export default function Home() {
+  return (
+    <Suspense fallback={<PageLoading />}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function PageLoading() {
+  return (
+    <div className="flex flex-col min-h-screen text-white items-center justify-center">
+      <div className="animate-pulse text-xl">Cargando...</div>
+    </div>
+  );
+}
+
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import CodeEditor from "@/components/CodeEditor";
 import Navbar from "@/components/Navbar";
 import { logout } from "@/actions/logout";
 import { sendCommand } from "@/actions/sendCommand";
-import { useSearchParams } from "next/navigation";
 
-export default function Home() {
+function HomeContent() {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("// Salida del código aquí...");
   const [isLoggedIn, setIsLoggedIn] = useState(false);

@@ -1,5 +1,3 @@
-"use server";
-
 import { Disk } from "../types/Disk";
 
 interface ListDisksResponse {
@@ -14,7 +12,9 @@ interface ListDisksResponse {
  */
 export const listDisks = async (): Promise<ListDisksResponse> => {
   try {
-    const response = await fetch("http://localhost:8080/disks", {
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://54.196.151.70:8080";
+    const response = await fetch(`${apiUrl}/disks`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

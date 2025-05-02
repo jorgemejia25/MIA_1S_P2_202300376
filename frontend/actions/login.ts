@@ -1,5 +1,3 @@
-"use server";
-
 interface LoginResponse {
   success?: boolean;
   msg?: string;
@@ -16,7 +14,9 @@ export const login = async (
   console.log(`Login attempt: ${username} on partition ${partition}`);
 
   try {
-    const response = await fetch("http://localhost:8080/login", {
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://54.196.151.70:8080";
+    const response = await fetch(`${apiUrl}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

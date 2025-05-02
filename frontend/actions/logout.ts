@@ -1,15 +1,13 @@
-"use server";
-
 interface LogoutResponse {
   success?: boolean;
   msg?: string;
 }
 
 export const logout = async (): Promise<LogoutResponse> => {
-  console.log("Logout attempt");
-
   try {
-    const response = await fetch("http://localhost:8080/logout", {
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://54.196.151.70:8080";
+    const response = await fetch(`${apiUrl}/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,11 +15,6 @@ export const logout = async (): Promise<LogoutResponse> => {
     });
 
     const data: LogoutResponse = await response.json();
-
-    if (data.success) {
-      console.log("Logout successful");
-    }
-
     return data;
   } catch (error) {
     console.error("Logout error:", error);

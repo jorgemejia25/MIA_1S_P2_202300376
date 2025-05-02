@@ -1,26 +1,26 @@
 ### Listar el directorio raíz de una partición
-GET http://localhost:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11
+GET http://54.196.151.70:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11
 
 ### Listar un directorio específico dentro de una partición
-GET http://localhost:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/home/archivos
+GET http://54.196.151.70:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/home/archivos
 
 ### Listar un directorio en una ruta más anidada
-GET http://localhost:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/home/archivos/user/docs
+GET http://54.196.151.70:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/home/archivos/user/docs
 
 ### Error: Sin especificar el disco
-GET http://localhost:8080/directory?partition=Part11&path=/home/archivos
+GET http://54.196.151.70:8080/directory?partition=Part11&path=/home/archivos
 
 ### Error: Sin especificar la partición
-GET http://localhost:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&path=/home/archivos
+GET http://54.196.151.70:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&path=/home/archivos
 
 ### Error: Disco no existente
-GET http://localhost:8080/directory?disk=/ruta/inexistente/Disco1.mia&partition=Part11&path=/home/archivos
+GET http://54.196.151.70:8080/directory?disk=/ruta/inexistente/Disco1.mia&partition=Part11&path=/home/archivos
 
 ### Error: Partición no existente
-GET http://localhost:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=ParticionInexistente&path=/home/archivos
+GET http://54.196.151.70:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=ParticionInexistente&path=/home/archivos
 
 ### Error: Directorio no existente
-GET http://localhost:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/ruta/inexistente
+GET http://54.196.151.70:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/ruta/inexistente
 
 ### Intentando listar un archivo (no un directorio)
-GET http://localhost:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/users.txt
+GET http://54.196.151.70:8080/directory?disk=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia&partition=Part11&path=/users.txt

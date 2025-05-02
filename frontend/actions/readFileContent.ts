@@ -1,5 +1,3 @@
-"use server";
-
 import { FileContent } from "@/types/FileSystem";
 
 /**
@@ -18,21 +16,20 @@ export async function readFileContent(
     console.log("Leyendo archivo:", filePath);
     console.log(diskPath, partitionName, filePath);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/read-file`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          diskPath,
-          partitionName,
-          filePath,
-        }),
-        cache: "no-store",
-      }
-    );
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://54.196.151.70:8080";
+    const response = await fetch(`${apiUrl}/read-file`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        diskPath,
+        partitionName,
+        filePath,
+      }),
+      cache: "no-store",
+    });
 
     const data = await response.json();
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"disk.simulator.com/m/v2/internal/disk/memory"
-	"disk.simulator.com/m/v2/internal/disk/types/structures/ext2"
+	"disk.simulator.com/m/v2/internal/disk/types/structures/ext"
 	"disk.simulator.com/m/v2/utils"
 )
 

@@ -2,11 +2,12 @@ package partition_operations
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"disk.simulator.com/m/v2/internal/disk/memory"
 	"disk.simulator.com/m/v2/internal/disk/operations/auth"
-	"disk.simulator.com/m/v2/internal/disk/types/structures/ext2"
+	ext2 "disk.simulator.com/m/v2/internal/disk/types/structures/ext"
 	"disk.simulator.com/m/v2/utils"
 )
 
@@ -47,6 +48,32 @@ func CreateDirectory(dirPath string, p bool) error {
 
 	if err != nil {
 		return err
+	}
+
+	// Forzar sincronización después de crear directorio
+	if file, err := os.OpenFile(partitionPath, os.O_WRONLY, 0666); err == nil {
+		file.Sync()
+		file.Close()
+	}
+
+	// Si el sistema de archivos es ext3, registrar la operación en el journaling
+	if superBlock.SFilesystemType == 3 {
+		// Registrar la operación en el journal
+		err = ext2.AddJournal(
+			partitionPath,
+			int64(partition.Partition.Part_start),
+			0, // Este parámetro es ignorado ahora
+			"mkdir",
+			dirPath,
+			"", // No hay contenido específico para un directorio
+		)
+
+		if err != nil {
+			fmt.Printf("Advertencia: No se pudo registrar la operación en el journaling: %v\n", err)
+			// No retornar error, ya que el directorio fue creado exitosamente
+		} else {
+			fmt.Println("Operación registrada en el journaling")
+		}
 	}
 
 	fmt.Printf("Directory %s created\n", dirPath)

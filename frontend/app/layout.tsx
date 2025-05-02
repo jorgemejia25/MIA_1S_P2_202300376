@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} antialiased gap-16 bg-neutral-950 text-white min-h-screen`}
+        className={`${inter.className} antialiased gap-16  bg-gradient-to-b from-black to-neutral-900 text-white min-h-screen`}
       >
         {children}
       </body>

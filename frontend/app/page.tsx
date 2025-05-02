@@ -50,7 +50,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white">
+    <div className="flex flex-col min-h-screen  text-white">
       {/* Navigation Bar */}
       <div className="fixed top-0 left-0 right-0 z-10 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <Navbar

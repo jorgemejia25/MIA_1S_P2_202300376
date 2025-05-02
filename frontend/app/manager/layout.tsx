@@ -4,7 +4,7 @@ export default function ManagerLayout(
   }>
 ) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-gray-100 p-6">
+    <div className="min-h-screen text-gray-100 p-6">
       <div className="max-w-7xl mx-auto">{props.children}</div>
     </div>
   );

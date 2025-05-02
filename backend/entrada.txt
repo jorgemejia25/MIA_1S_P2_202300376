@@ -16,10 +16,10 @@ fdisk -type=P -unit=k -name=Part2 -size=10240 -path=/home/jorgis/Calificacion_MI
 fdisk -type=P -unit=M -name=Part3 -size=10 -path=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia -fit=BF
 
 # ELIMINANDO PARTICIONES
-# fdisk -delete=fast -name=Part3 -path=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia
+fdisk -delete=fast -name=Part3 -path=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia
 
 #QUITNADO ESPACIO
-# fdisk -add=-500 -size=10240 -unit=k -path=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia -name=Part2
+fdisk -add=-500 -size=10240 -unit=k -path=/home/jorgis/Calificacion_MIA/Discos/Disco1.mia -name=Part2
  
 #******************** MONTAR PARTICIONES ********************
 #DISCO 1

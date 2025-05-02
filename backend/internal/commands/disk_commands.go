@@ -684,6 +684,12 @@ func resetFlags() {
 	if fdiskCmd.Flags().Lookup("type") != nil {
 		fdiskCmd.Flags().Set("type", "P")
 	}
+	if fdiskCmd.Flags().Lookup("delete") != nil {
+		fdiskCmd.Flags().Set("delete", "")
+	}
+	if fdiskCmd.Flags().Lookup("add") != nil {
+		fdiskCmd.Flags().Set("add", "")
+	}
 
 	// Reiniciar flags de rep
 	if repCmd.Flags().Lookup("path") != nil {

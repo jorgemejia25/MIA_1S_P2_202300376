@@ -1,9 +1,9 @@
 import "./globals.css";
 
+import { Inter } from "next/font/google";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 
-const poppins = Poppins({
+const inter = Inter({
   // variable: "--font-raleway",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -21,7 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.className} antialiased`}>{children}</body>
+      <body
+        className={`${inter.className} antialiased gap-16 bg-neutral-950 text-white min-h-screen`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

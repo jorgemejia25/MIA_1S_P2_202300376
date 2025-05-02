@@ -17,5 +17,9 @@ func RemoveDisk(path string) error {
 		return fmt.Errorf("error al eliminar el disco: %v", err)
 	}
 
+	// Eliminar el disco del registro
+	registry := GetDiskRegistry()
+	registry.UnregisterDisk(path)
+
 	return nil
 }

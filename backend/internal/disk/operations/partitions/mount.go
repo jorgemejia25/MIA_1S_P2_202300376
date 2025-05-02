@@ -51,3 +51,23 @@ func MountPartition(name string, path string) error {
 
 	return nil
 }
+
+// UnmountPartition desmonta una partición montada identificada por su ID.
+//
+// Parámetros:
+//   - id: identificador único de la partición a desmontar
+//
+// Retorna un error si la partición no está montada o si hay problemas durante el desmontaje
+func UnmountPartition(id string) error {
+	// Obtener la instancia de almacenamiento en memoria
+	storage := memory.GetInstance()
+
+	// Intentar desmontar la partición
+	err := storage.UnmountPartition(id)
+	if err != nil {
+		return fmt.Errorf("error al desmontar la partición con ID %s: %v", id, err)
+	}
+
+	fmt.Printf("Partition with ID %s unmounted successfully\n", id)
+	return nil
+}

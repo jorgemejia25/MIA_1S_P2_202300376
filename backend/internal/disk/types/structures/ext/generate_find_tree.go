@@ -166,48 +166,6 @@ func (sb *SuperBlock) FindFileOrFolderByName(
 	return output.String(), nil
 }
 
-// findInodeInDirectory busca un inodo por nombre dentro de un directorio específico
-func (sb *SuperBlock) findInodeInDirectory(diskPath string, dirInodeIndex int32, name string) (int32, error) {
-	dirInode, err := sb.GetInodeByNumber(diskPath, dirInodeIndex)
-	if err != nil {
-		return -1, err
-	}
-
-	// Buscar en los bloques directos
-	for i := 0; i < 12; i++ {
-		blockIndex := dirInode.IBlock[i]
-		if blockIndex == -1 {
-			continue
-		}
-
-		dirBlock := &DirBlock{}
-		err := dirBlock.Deserialize(diskPath, int64(sb.SBlockStart+(blockIndex*sb.SBlockS)))
-		if err != nil {
-			continue
-		}
-
-		for _, entry := range dirBlock.BContent {
-			if entry.BInodo == -1 {
-				continue
-			}
-
-			entryName := strings.Trim(string(entry.BName[:]), "\x00")
-			if entryName == name {
-				return entry.BInodo, nil
-			}
-		}
-	}
-
-	// Buscar en bloques indirectos
-	if dirInode.IBlock[12] != -1 {
-		inodeIndex, found, err := sb.findInIndirectBlocks(diskPath, dirInode.IBlock[12], name)
-		if err == nil && found {
-			return inodeIndex, nil
-		}
-	}
-
-	return -1, fmt.Errorf("no se encontró '%s' en el directorio", name)
-}
 
 // findInIndirectBlocks busca un nombre en bloques indirectos
 func (sb *SuperBlock) findInIndirectBlocks(diskPath string, blockIndex int32, name string) (int32, bool, error) {

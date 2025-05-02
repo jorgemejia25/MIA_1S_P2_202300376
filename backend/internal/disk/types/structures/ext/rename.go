@@ -49,35 +49,6 @@ func (sb *SuperBlock) Rename(partitionPath string, parentDirs []string, oldName 
 	return parentInode.Serialize(partitionPath, int64(sb.SInodeStart+(parentInodeIndex*sb.SInodeS)))
 }
 
-func (sb *SuperBlock) fileExistsInDirectory(partitionPath string, dirInodeIndex int32, fileName string) (bool, error) {
-	dirInode := &INode{}
-	if err := dirInode.Deserialize(partitionPath, int64(sb.SInodeStart+(dirInodeIndex*sb.SInodeS))); err != nil {
-		return false, err
-	}
-
-	for i := 0; i < 12; i++ {
-		blockIndex := dirInode.IBlock[i]
-		if blockIndex == -1 {
-			continue
-		}
-
-		dirBlock := &DirBlock{}
-		if err := dirBlock.Deserialize(partitionPath, int64(sb.SBlockStart+(blockIndex*sb.SBlockS))); err != nil {
-			return false, err
-		}
-
-		for _, entry := range dirBlock.BContent {
-			if entry.BInodo == -1 {
-				continue
-			}
-
-			if strings.Trim(string(entry.BName[:]), "\x00") == fileName {
-				return true, nil
-			}
-		}
-	}
-	return false, nil
-}
 
 func (sb *SuperBlock) updateDirectoryEntry(partitionPath string, parentInodeIndex int32, oldName string, newName string) error {
 	parentInode := &INode{}

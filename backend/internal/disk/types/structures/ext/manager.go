@@ -781,7 +781,6 @@ func (sb *SuperBlock) CreateFile(
 	// Este punto no debería alcanzarse nunca
 	return fmt.Errorf("error inesperado en la creación del archivo")
 
-	return nil
 }
 
 func (sb *SuperBlock) createFileInInode(

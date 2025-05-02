@@ -116,8 +116,8 @@ var fdiskCmd = &cobra.Command{
 			return fmt.Errorf("invalid unit type. Use B, K or M")
 		}
 
-		// Validar el valor de type
-		if partitionType != "P" && partitionType != "E" && partitionType != "L" {
+		// Validar el valor de type solo si no estamos eliminando o modificando espacio
+		if del == "" && add == "" && partitionType != "P" && partitionType != "E" && partitionType != "L" {
 			return fmt.Errorf("invalid partition type. Use P, E, or L")
 		}
 
@@ -134,6 +134,7 @@ var fdiskCmd = &cobra.Command{
 			Fit:  fit,
 			Name: name,
 			Type: partitionType,
+			Del:  del,
 			Add: func() int {
 				if add != "" {
 					addInt, err := strconv.Atoi(add)
@@ -145,15 +146,9 @@ var fdiskCmd = &cobra.Command{
 			}(),
 		}
 
-		// Crear el output formateado
-		output := fmt.Sprintf("Creating partition %s at %s with size %d%s, type %s",
-			params.Name, params.Path, params.Size, params.Unit, params.Type)
-
-		// Escribir el output en la salida del comando
-		fmt.Fprintln(cmd.OutOrStdout(), output)
-
+		// Si es una operación de eliminación
 		if del != "" {
-			// Si la opción de eliminación es diferente de vacío, eliminar la partición
+			fmt.Fprintf(cmd.OutOrStdout(), "Deleting partition %s from %s\n", params.Name, params.Path)
 			err := partition_operations.DeletePartition(params)
 			if err != nil {
 				return err
@@ -162,17 +157,21 @@ var fdiskCmd = &cobra.Command{
 			return nil
 		}
 
+		// Si es una operación de añadir o quitar espacio
 		if add != "" {
-			// Si la opción de añadir espacio es diferente de vacío, añadir espacio a la partición
+			fmt.Fprintf(cmd.OutOrStdout(), "Modifying partition %s at %s by %d%s\n",
+				params.Name, params.Path, params.Add, params.Unit)
 			err := partition_operations.AddSpacePartition(params)
 			if err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "Space added to partition successfully")
+			fmt.Fprintln(cmd.OutOrStdout(), "Space modified in partition successfully")
 			return nil
 		}
 
-		// Crear la partición usando la estructura FDisk
+		// Si es una operación de creación
+		fmt.Fprintf(cmd.OutOrStdout(), "Creating partition %s at %s with size %d%s, type %s\n",
+			params.Name, params.Path, params.Size, params.Unit, params.Type)
 		err := partition_operations.CreatePartition(params)
 		if err != nil {
 			return err

@@ -109,17 +109,3 @@ func (sb *SuperBlock) freeFileBlocks(partitionPath string, inode *INode) error {
 	}
 	return nil
 }
-
-// Función para verificar permisos de lectura
-func (sb *SuperBlock) userHasReadPermission(inode *INode, uid int32, gid int32) bool {
-	if inode.IUid == uid && inode.IPerm[0] >= '4' {
-		return true
-	}
-	if inode.IGid == gid && inode.IPerm[1] >= '4' {
-		return true
-	}
-	if inode.IPerm[2] >= '4' {
-		return true
-	}
-	return false
-}

@@ -1,8 +1,10 @@
 package partition_operations
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"strings"
 
 	mbr_operations "disk.simulator.com/m/v2/internal/disk/operations/mbr"
 	"disk.simulator.com/m/v2/internal/disk/types"
@@ -30,6 +32,44 @@ func CreatePartition(params types.FDisk) error {
 	err = mbr.DeserializeMBR(params.Path)
 	if err != nil {
 		return fmt.Errorf("error al leer el MBR: %v", err)
+	}
+
+	// Verificar si ya existe una partición con el mismo nombre
+	for _, part := range mbr.Mbr_partitions {
+		if part.Part_size > 0 {
+			partName := string(bytes.Trim(part.Part_name[:], "\x00"))
+			if strings.TrimSpace(partName) == strings.TrimSpace(params.Name) {
+				return fmt.Errorf("ya existe una partición con el nombre '%s'", params.Name)
+			}
+		}
+	}
+
+	// Si es una partición lógica, verificar en las particiones extendidas también
+	if params.Type == "L" {
+		extended, _, err := mbr_operations.FindExtendedPartition(params.Path)
+		if err == nil {
+			currentEBR := structures.EBR{}
+			currentPos := extended.Part_start
+
+			for {
+				err = currentEBR.DeserializeEBR(params.Path, currentPos)
+				if err != nil {
+					break
+				}
+
+				if currentEBR.Part_size > 0 {
+					ebrName := string(bytes.Trim(currentEBR.Part_name[:], "\x00"))
+					if strings.TrimSpace(ebrName) == strings.TrimSpace(params.Name) {
+						return fmt.Errorf("ya existe una partición lógica con el nombre '%s'", params.Name)
+					}
+				}
+
+				if currentEBR.Part_next <= 0 {
+					break
+				}
+				currentPos = currentEBR.Part_next
+			}
+		}
 	}
 
 	// Verificar que no haya más de 4 particiones en el MBR

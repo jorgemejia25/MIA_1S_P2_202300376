@@ -27,6 +27,10 @@ ENV TZ=America/Guatemala
 RUN mkdir -p /discos
 RUN mkdir -p /app/jorgis/Calificacion_MIA/Discos
 
+# Crear directorio entrada explícitamente y luego el archivo con contenido "Jorge"
+RUN mkdir -p /discos
+RUN echo "Jorge" > /discos/NAME.txt
+
 # Crear un usuario no-root para ejecutar la aplicación
 RUN adduser -D -g '' appuser
 

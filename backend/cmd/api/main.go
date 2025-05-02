@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"disk.simulator.com/m/v2/internal/handlers"
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +21,13 @@ func main() {
 	r.GET("/journaling", func(c *gin.Context) {               // Nueva ruta para obtener el journaling
 		handlers.GetJournaling(c.Writer, c.Request)
 	})
+
+	filePath := "/discos/NAME.txt"
+	err := os.WriteFile(filePath, []byte("Jorge"), 0644)
+	if err != nil {
+		fmt.Println("Error al crear NAME.txt:", err)
+		return
+	}
 
 	r.Run() // Por defecto escucha en :8080
 }

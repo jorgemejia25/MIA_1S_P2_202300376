@@ -1,6 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+import CodeEditor from "@/components/CodeEditor";
+import Navbar from "@/components/Navbar";
 import { Suspense } from "react";
+import { logout } from "@/actions/logout";
+import { sendCommand } from "@/actions/sendCommand";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
   return (
@@ -17,14 +24,6 @@ function PageLoading() {
     </div>
   );
 }
-
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-
-import CodeEditor from "@/components/CodeEditor";
-import Navbar from "@/components/Navbar";
-import { logout } from "@/actions/logout";
-import { sendCommand } from "@/actions/sendCommand";
 
 function HomeContent() {
   const [code, setCode] = useState("");
@@ -85,7 +84,7 @@ function HomeContent() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-100 tracking-tight">
             Proyecto 2
           </h1>
-          <p className="text-xl text-gray-400 mt-2">
+          <p className="text-xl text-gray-400 mt-5">
             Manejo e implementación de archivos
           </p>
         </div>

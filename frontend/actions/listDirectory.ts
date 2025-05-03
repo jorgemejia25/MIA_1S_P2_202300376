@@ -9,8 +9,7 @@ export async function listDirectory(
     console.log("EJECUTANDO DISK", disk);
 
     // Construir la URL con parámetros de consulta
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://54.196.151.70:8080";
+    const apiUrl = process.env.API_URL || "http://3.85.93.122:8080";
     const url = new URL(`${apiUrl}/directory`);
     url.searchParams.append("disk", disk);
     url.searchParams.append("partition", partition);

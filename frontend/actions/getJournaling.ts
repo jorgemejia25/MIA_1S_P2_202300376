@@ -11,8 +11,7 @@ export async function getJournaling(
   partitionName: string
 ): Promise<JournalingResponse> {
   try {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://54.196.151.70:8080";
+    const apiUrl = process.env.API_URL || "http://3.85.93.122:8080";
 
     // Construir la URL con los parámetros de consulta
     const url = `${apiUrl}/journaling?diskPath=${encodeURIComponent(

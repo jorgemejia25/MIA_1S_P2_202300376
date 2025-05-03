@@ -1,5 +1,5 @@
 ### Prueba de login exitoso
-POST http://54.196.151.70:8080/login
+POST http://3.85.93.122:8080/login
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Prueba de login con credenciales incorrectas
-POST http://54.196.151.70:8080/login
+POST http://3.85.93.122:8080/login
 Content-Type: application/json
 
 {
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Prueba de login con partición inexistente
-POST http://54.196.151.70:8080/login
+POST http://3.85.93.122:8080/login
 Content-Type: application/json
 
 {
@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 ### Prueba de login con JSON inválido (para probar error 400)
-POST http://54.196.151.70:8080/login
+POST http://3.85.93.122:8080/login
 Content-Type: application/json
 
 {
